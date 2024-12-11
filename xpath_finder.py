@@ -1,12 +1,19 @@
 import pandas as pd
 import os
-from tkinter import Tk, filedialog, messagebox, Label, Button
+from tkinter import filedialog, messagebox
+from ttkbootstrap import Style
+from ttkbootstrap.constants import *
+from ttkbootstrap.widgets import Label, Button, Progressbar
 
+# Initialize ttkbootstrap with custom theme
+style = Style(theme="litera")  # Default theme to override colors
+style.configure("TLabel", background="#ffffff", foreground="#000000")
+style.configure("TButton", background="#0092d0", foreground="#ffffff")
+style.configure("TProgressbar", troughcolor="#c1c7d0", bordercolor="#c1c7d0", background="#0092d0", lightcolor="#0092d0", darkcolor="#0092d0")
 
-# Initialize Tkinter
-root = Tk()
-root.title("Xpath finder")
-root.geometry("400x300")
+root = style.master
+root.title("Xpath Finder")
+root.geometry("400x400")
 
 # Global variables
 reference_file = None
@@ -21,7 +28,7 @@ def select_reference_file():
     )
     if reference_file:
         label_ref_file.config(text=f"Selected: {os.path.basename(reference_file)}")
-        btn_next_to_process.config(state="normal")
+        btn_next_to_process.config(state=NORMAL)
     else:
         label_ref_file.config(text="No file selected!")
 
@@ -34,7 +41,7 @@ def select_process_file():
     )
     if process_file:
         label_proc_file.config(text=f"Selected: {os.path.basename(process_file)}")
-        btn_start_processing.config(state="normal")
+        btn_start_processing.config(state=NORMAL)
     else:
         label_proc_file.config(text="No file selected!")
 
@@ -43,6 +50,9 @@ def start_processing():
     global reference_file, process_file
 
     try:
+        # Show progress
+        progress.start()
+
         # Determine the output path
         output_file = os.path.join(
             os.path.dirname(process_file),
@@ -74,28 +84,38 @@ def start_processing():
         # Error message
         messagebox.showerror("Error", f"An error occurred:\n{e}")
 
+    finally:
+        # Stop progress
+        progress.stop()
+
 # GUI Elements
-Label(root, text="Welcome to Xpath Finder!", font=("Helvetica", 14)).pack(pady=10)
+Label(root, text="Welcome to Xpath Finder!", font=("Helvetica", 14, "bold"), style="TLabel").pack(pady=10)
 
 # Select reference file
-Label(root, text="Step 1: Select the reference Excel file:").pack(anchor="w", padx=20)
-btn_ref_file = Button(root, text="Choose Reference File", command=select_reference_file)
-btn_ref_file.pack(pady=5)
-label_ref_file = Label(root, text="No file selected!", fg="gray")
-label_ref_file.pack()
+Label(root, text="Step 1: Select the reference Excel file:", style="TLabel").pack(anchor="w", padx=20, pady=(10, 5))
+btn_ref_file = Button(root, text="Choose Reference File", command=select_reference_file, style="TButton")
+btn_ref_file.pack(pady=(0, 10))
+label_ref_file = Label(root, text="No file selected!", style="TLabel")
+label_ref_file.pack(pady=(0, 20))
 
 # Select process file
-Label(root, text="Step 2: Select the Excel file to process:").pack(anchor="w", padx=20)
-btn_next_to_process = Button(root, text="Choose Process File", command=select_process_file, state="disabled")
-btn_next_to_process.pack(pady=5)
-label_proc_file = Label(root, text="No file selected!", fg="gray")
-label_proc_file.pack()
+Label(root, text="Step 2: Select the Excel file to process:", style="TLabel").pack(anchor="w", padx=20, pady=(10, 5))
+btn_next_to_process = Button(root, text="Choose Process File", command=select_process_file, state=DISABLED, style="TButton")
+btn_next_to_process.pack(pady=(0, 10))
+label_proc_file = Label(root, text="No file selected!", style="TLabel")
+label_proc_file.pack(pady=(0, 20))
 
 # Start processing
-btn_start_processing = Button(root, text="Start Processing", command=start_processing, state="disabled")
-btn_start_processing.pack(pady=20)
+Label(root, text="Step 3: Start processing the files:", style="TLabel").pack(anchor="w", padx=20, pady=(10, 5))
+btn_start_processing = Button(root, text="Start Processing", command=start_processing, state=DISABLED, style="TButton")
+btn_start_processing.pack(pady=(0, 20))
 
-Label(root, text="© 2024 md_naciri. All rights reserved.", font=("Helvetica", 8), fg="gray").pack(side="bottom", pady=5)
+# Progress bar
+# progress = Progressbar(root, style="TProgressbar", mode="indeterminate")
+# progress.pack(pady=(10, 20))
+
+# Footer
+Label(root, text="© 2024 md_naciri. All rights reserved.", font=("Helvetica", 8), style="TLabel").pack(side="bottom", pady=(5, 10))
 
 # Run the GUI loop
 root.mainloop()
