@@ -3,13 +3,12 @@ import os
 from tkinter import filedialog, messagebox
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
-from ttkbootstrap.widgets import Label, Button, Progressbar
+from ttkbootstrap.widgets import Label, Button
 
 # Initialize ttkbootstrap with custom theme
 style = Style(theme="litera")  # Default theme to override colors
 style.configure("TLabel", background="#ffffff", foreground="#000000")
 style.configure("TButton", background="#0092d0", foreground="#ffffff")
-style.configure("TProgressbar", troughcolor="#c1c7d0", bordercolor="#c1c7d0", background="#0092d0", lightcolor="#0092d0", darkcolor="#0092d0")
 
 root = style.master
 root.title("Xpath Finder")
@@ -50,9 +49,6 @@ def start_processing():
     global reference_file, process_file
 
     try:
-        # Show progress
-        progress.start()
-
         # Determine the output path
         output_file = os.path.join(
             os.path.dirname(process_file),
@@ -84,10 +80,6 @@ def start_processing():
         # Error message
         messagebox.showerror("Error", f"An error occurred:\n{e}")
 
-    finally:
-        # Stop progress
-        progress.stop()
-
 # GUI Elements
 Label(root, text="Welcome to Xpath Finder!", font=("Helvetica", 14, "bold"), style="TLabel").pack(pady=10)
 
@@ -109,10 +101,6 @@ label_proc_file.pack(pady=(0, 20))
 Label(root, text="Step 3: Start processing the files:", style="TLabel").pack(anchor="w", padx=20, pady=(10, 5))
 btn_start_processing = Button(root, text="Start Processing", command=start_processing, state=DISABLED, style="TButton")
 btn_start_processing.pack(pady=(0, 20))
-
-# Progress bar
-# progress = Progressbar(root, style="TProgressbar", mode="indeterminate")
-# progress.pack(pady=(10, 20))
 
 # Footer
 Label(root, text="© 2024 md_naciri. All rights reserved.", font=("Helvetica", 8), style="TLabel").pack(side="bottom", pady=(5, 10))
